@@ -16,6 +16,8 @@ public class ModerationEventProducer {
 
     private static final String TOPIC_REPORT_CREATED  = "report.created";
     private static final String TOPIC_REPORT_RESOLVED = "report.resolved";
+    private static final String TOPIC_INQUIRY_CREATED = "inquiry.created";
+    private static final String TOPIC_INQUIRY_ANSWERED = "inquiry.answered";
 
     /**
      * 신고 접수 이벤트 발행
@@ -50,5 +52,35 @@ public class ModerationEventProducer {
         );
         kafkaTemplate.send(TOPIC_REPORT_RESOLVED, String.valueOf(reportId), payload);
         log.info("[Kafka] report.resolved published: reportId={}, status={}", reportId, status);
+    }
+
+    /**
+     * 문의 접수 이벤트 발행
+     * - Notification: 사용자 접수 알림 또는 관리자 알림 생성
+     */
+    public void publishInquiryCreated(Long inquiryId, Long memberId, String title) {
+        Map<String, Object> payload = Map.of(
+                "inquiryId", inquiryId,
+                "memberId", memberId != null ? memberId : 0L,
+                "title", title != null ? title : ""
+        );
+        kafkaTemplate.send(TOPIC_INQUIRY_CREATED, String.valueOf(inquiryId), payload);
+        log.info("[Kafka] inquiry.created published: inquiryId={}, memberId={}", inquiryId, memberId);
+    }
+
+    /**
+     * 문의 답변 완료 이벤트 발행
+     * - Notification: 작성자에게 답변 완료 알림 생성
+     */
+    public void publishInquiryAnswered(Long inquiryId, Long memberId, String status, Long answeredByMemberId) {
+        Map<String, Object> payload = Map.of(
+                "inquiryId", inquiryId,
+                "memberId", memberId != null ? memberId : 0L,
+                "status", status != null ? status : "ANSWERED",
+                "answeredByMemberId", answeredByMemberId != null ? answeredByMemberId : 0L
+        );
+        kafkaTemplate.send(TOPIC_INQUIRY_ANSWERED, String.valueOf(inquiryId), payload);
+        log.info("[Kafka] inquiry.answered published: inquiryId={}, memberId={}, status={}",
+                inquiryId, memberId, status);
     }
 }

@@ -25,7 +25,13 @@ public enum ErrorCode {
 
     // 키워드
     KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "키워드를 찾을 수 없습니다."),
-    KEYWORD_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 키워드입니다.");
+    KEYWORD_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 키워드입니다."),
+
+    // 문의
+    SUPPORT_INQUIRY_NOT_FOUND(HttpStatus.NOT_FOUND, "문의 내역을 찾을 수 없습니다."),
+    SUPPORT_INQUIRY_ALREADY_HANDLED(HttpStatus.BAD_REQUEST, "이미 처리된 문의입니다."),
+    SUPPORT_INQUIRY_INVALID_STATUS(HttpStatus.BAD_REQUEST, "변경 가능한 문의 상태가 아닙니다."),
+    SUPPORT_INQUIRY_REPLY_REQUIRED(HttpStatus.BAD_REQUEST, "답변 내용은 필수입니다.");
 
     private final HttpStatus status;
     private final String message;
